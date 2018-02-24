@@ -117,5 +117,79 @@ Exit:
 IterativeMax:
     #TODO: write your code here, $a0 stores the address of the array, $a1 stores the length of the array
 
+	addi $sp, $sp, -4
+	sw $s0, 0($sp)
+	
+	#store counter
+	li $s0, 0
+
+	#allocate memory for max
+	addi $sp, $sp, -4
+	sw $s1, 0($sp)
+
+	#max that we load in
+	lw $s1, 0($a0)
+	
+	#lenght of the array
+	addi $sp, $sp, -4
+	sw $s2, 0($sp)	
+	move $s2, $a1
+	
+	#address of the array
+	addi $sp, $sp, -4
+	sw $s3, 0($sp)	
+	move $s3, $a0
+	
+	#loop through the array
+loop:
+	beq $s0, $s2, endloop
+	
+	sll $t0, $s0, 2
+	add $t1, $s3, $t0
+	lw $t2, 0($t1)
+	
+	li $v0, 1
+	move $a0, $t2
+	syscall
+
+	li $v0, 4
+	la $a0, newline
+	syscall
+
+	bgt $t2, $s1, changeMax
+	j endIF
+
+changeMax:
+	move $s1, $t2
+	j endIF
+
+endIF:
+	li $v0, 1
+	move $a0, $s1
+	syscall
+
+	#inc counter
+	#li $v0, 4
+	#la $a0, newline
+	#syscall
+	
+	addi $sp, $sp, -4
+	sw $ra, 0($sp)	
+	jal ConventionCheck
+	
+	lw $ra, 0($sp)
+	addi $sp, $sp, 4
+
+	addi $s0, $s0, 1
+	
+	j loop
+	
+endloop: 
+	lw $s3, 0($sp)
+	lw $s2, 4($sp)
+	lw $s1, 8($sp)
+	lw $s0, 12($sp)
+	addi $sp, $sp, 16
     # Do not remove this line
     jr      $ra
+
